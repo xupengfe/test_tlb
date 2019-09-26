@@ -209,7 +209,7 @@ static void *create_map(void *map, unsigned long size, unsigned long stride)
 {
 	unsigned int flags = MAP_PRIVATE | MAP_ANONYMOUS;
 	unsigned long off, mapsize;
-	unsigned long long *lastpos;
+	unsigned long *lastpos;
 
 	/*
 	 * If we're using hugepages, we will just re-use any existing
@@ -266,7 +266,7 @@ static void *create_map(void *map, unsigned long size, unsigned long stride)
 		lastpos = map + off;
 		*lastpos = off + stride;
 	}
-	printf("*lastpos:%lld, off:%ld, stride:%ld\n",
+	printf("*lastpos:%ld, off:%ld, stride:%ld\n",
 		*lastpos,off,stride);
 	*lastpos = 0;
 
