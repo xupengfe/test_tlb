@@ -124,7 +124,6 @@ static double do_test(void *map)
 		//debug for tests
 		//printf("count:%ld, offset:%ld, &map:%p, map:%p, **map:%d, *(map+offset):%d\n",
 		//	count, offset, &map, map, *(unsigned int*)map, *(unsigned int *)(map + offset));
-		//if ( *(unsigned int *)(map + offset) == 0 )
 		if ( offset == 0 )
 			cycle++;
 	} while (!stop);
@@ -172,7 +171,7 @@ static unsigned long get_num(const char *str)
 static void randomize_map(void *map, unsigned long size, unsigned long stride)
 {
 	unsigned long off;
-	unsigned int *lastpos, *rnd;
+	unsigned long *lastpos, *rnd;
 	int n;
 
 	rnd = calloc(size / stride + 1, sizeof(unsigned int));
