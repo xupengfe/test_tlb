@@ -254,13 +254,15 @@ static void *create_map(void *map, unsigned long size, unsigned long stride)
 		madvise(map, mapsize, MADV_NOHUGEPAGE);
 	}
 
-	printf("*map:%d, *(map+%ld):%d\n",
-		*(unsigned int*)map, stride, *(unsigned int *)(map + stride));
 	lastpos = map;
+	printf("*map:%d, *(map+%ld):%d,&map:%p,&lastpos:%p\n",
+		*(unsigned int*)map, stride, *(unsigned int *)(map + stride),&map,&lastpos);
 	for (off = 0; off < size; off += stride) {
 		lastpos = map + off;
 		*lastpos = off + stride;
 	}
+	printf("*lastpos:%d, off:%ld, stride:%ld\n",
+		*lastpos,off,stride);
 	*lastpos = 0;
 
 	printf("*map:%d, *(map+%ld):%d\n",
