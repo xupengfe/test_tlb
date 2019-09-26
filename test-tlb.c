@@ -77,6 +77,8 @@ static unsigned long warmup(void *map)
 		//debug for warmup
 		//printf("Before, &map:%p, *(map + %ld):0x%x\n",
 		//	&map, offset,*(volatile unsigned int *)(map + offset));
+		if ( *(unsigned int *)(map + offset) == 0 )
+			printf("warmup: offset:%ld\n",offset);
 		offset = *(volatile unsigned int *)(map + offset);
 		//debug for warmup
 		//printf("After set offset, &map:%p, *(map + %ld):0x%x\n",
@@ -89,7 +91,7 @@ static unsigned long warmup(void *map)
 
 static double do_test(void *map)
 {
-	unsigned long count = 0, offset = 0, usec;
+	unsigned long count = 0, offset = 0, usec, cycle=0;
 	struct timeval start, end;
 	struct itimerval itval =  {
 		.it_interval = { 0, 0 },
@@ -122,11 +124,14 @@ static double do_test(void *map)
 		//debug for tests
 		//printf("count:%ld, offset:%ld, &map:%p, map:%p, **map:%d, *(map+offset):%d\n",
 		//	count, offset, &map, map, *(unsigned int*)map, *(unsigned int *)(map + offset));
+		//if ( *(unsigned int *)(map + offset) == 0 )
+		if ( offset == 0 )
+			cycle++;
 	} while (!stop);
 	gettimeofday(&end, NULL);
 	usec = usec_diff(&start, &end);
-	printf("start:%ld.%06ld, end:%ld.%06ld\n",
-		start.tv_sec, start.tv_usec, end.tv_sec, end.tv_usec);
+	printf("start:%ld.%06ld, end:%ld.%06ld, run %ld rounds!!\n",
+		start.tv_sec, start.tv_usec, end.tv_sec, end.tv_usec, cycle);
 
 	// Make sure the compiler doesn't compile away offset
 	*(volatile unsigned int *)(map + offset);
@@ -204,7 +209,7 @@ static void *create_map(void *map, unsigned long size, unsigned long stride)
 {
 	unsigned int flags = MAP_PRIVATE | MAP_ANONYMOUS;
 	unsigned long off, mapsize;
-	unsigned int *lastpos;
+	unsigned long *lastpos;
 
 	/*
 	 * If we're using hugepages, we will just re-use any existing
@@ -261,7 +266,7 @@ static void *create_map(void *map, unsigned long size, unsigned long stride)
 		lastpos = map + off;
 		*lastpos = off + stride;
 	}
-	printf("*lastpos:%d, off:%ld, stride:%ld\n",
+	printf("*lastpos:%ld, off:%ld, stride:%ld\n",
 		*lastpos,off,stride);
 	*lastpos = 0;
 
